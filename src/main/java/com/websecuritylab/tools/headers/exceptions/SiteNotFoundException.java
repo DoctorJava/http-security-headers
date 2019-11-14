@@ -1,4 +1,4 @@
-package com.websecuritylab.tools.headers;
+package com.websecuritylab.tools.headers.exceptions;
 
 public class SiteNotFoundException extends Exception {
 

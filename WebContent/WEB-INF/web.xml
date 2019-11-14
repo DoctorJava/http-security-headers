@@ -11,7 +11,7 @@
 		</description>
 		<display-name>CheckHeaders</display-name>
 		<servlet-name>CheckHeaders</servlet-name>
-		<servlet-class>com.websecuritylab.tools.headers.CheckHeaders</servlet-class>
+		<servlet-class>com.websecuritylab.tools.headers.CheckHeadersServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CheckHeaders</servlet-name>

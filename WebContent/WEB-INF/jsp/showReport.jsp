@@ -4,9 +4,16 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>HTTP Security Headers: Report</title>
 </head>
 <body>
-Here is your report: ${some_result}
+<fieldset>
+	<legend>HTTP Security Header Report</legend>
+	<pre>${report}</pre>
+</fieldset>
+<fieldset>
+	<legend>Raw Response Headers</legend>
+	<pre>${raw_headers}</pre>
+</fieldset>
 </body>
 </html>

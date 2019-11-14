@@ -2,13 +2,16 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>HTTP Security Header Test</title>
+<title>HTTP Security Headers</title>
 </head>
 <body>
-
-	<form action="CheckHeaders" method=POST>
+	<form action="CheckHeaders" method=GET>
 		Target URL: <input type=text name="test_url" />
-		<button type="submit">Go Submit</button>
+		<button type="submit">Process URL Headers</button>
+	</form>
+	<form action="CheckHeaders" method=POST>
+		Response Headers: <textarea  name="test_headers" rows="8" cols="50" ></textarea>
+		<button type="submit">Process Pasted Headers</button>
 	</form>
 
 </body>
