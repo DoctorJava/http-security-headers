@@ -1,0 +1,19 @@
+apply plugin: 'java-library'
+apply plugin: 'war'
+apply plugin: 'eclipse-wtp'
+
+project.webAppDirName = 'WebContent'
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+
+	providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+	//providedCompile group: 'javax.servlet.jsp.jstl', name: 'jstl', version: '1.2'
+	//compile group: 'javax.servlet.jsp.jstl', name: 'jstl', version: '1.2'
+	
+	compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
+
+}
