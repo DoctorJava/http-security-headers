@@ -120,12 +120,12 @@ public class CheckHeadersServlet extends HttpServlet {
         	boolean present =  enforcer.isPresent(rule);
         	if ( enforcer.isPresent(rule) ) {
         		boolean isCompliant = true;
-                items.add(new ReportItem(header, headers.getValues(header), present, rule.isRequired(), isCompliant));
+                items.add(new ReportItem(rule, header, headers.getValues(header),  present, isCompliant));
         	}
         	else
         	{
         		boolean isCompliant = false;
-                items.add(new ReportItem(header, null, present, rule.isRequired(), isCompliant));
+                items.add(new ReportItem(rule, header, null, present, isCompliant));
         	}
         }
  		

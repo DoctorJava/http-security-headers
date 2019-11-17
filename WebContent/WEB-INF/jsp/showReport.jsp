@@ -11,13 +11,13 @@
 	<legend>HTTP Security Header Report: ${report.name}</legend>
 	<table>
 		<tr>
-			<th></th><th>Header</th><th>Values</th>
+			<th></th><th>Header</th><th>Values</th><th>Reference</th>
 		</tr>
 		<c:forEach var="item" items="${report.items}">
 			<tr>
 				<td>
 						<%-- ${ item.compliant ... only works with boolean, not Boolean } --%>
-						<c:if test="${item.isRequired()}">
+						<c:if test="${item.rule.isRequired()}">
 							${ item.isCompliant() ? "<img src='images/check.png' border=0/>" : "<img src='images/cross.png' border=0/>"}				
 						</c:if>
 				</td>
@@ -27,6 +27,13 @@
 					<c:forEach var="value" items="${item.headerValues}">
 						${value}</br>
 					</c:forEach>					
+				</td>
+				<td>
+					<c:if test="${ ! item.isCompliant() }">
+						<c:forEach var="ref" items="${item.rule.references}">
+							<a href="${ref.url}" target="_blank">${ref.title}</a> | 
+						</c:forEach>
+					</c:if>			
 				</td>
 			</tr>
 		</c:forEach>

@@ -6,18 +6,27 @@ public final class ReportItem {
 	private String _headerName;
 	//private String[] _headerValues;
 	private List<String> _headerValues;
+	private Rule _rule;
 	private boolean _isPresent;			
-	private boolean _isRequired;			// required is TRUE or FALSE
+	//private boolean _isRequired;			// required is TRUE or FALSE
 	private Boolean _isCompliant;			// compliant is TRUE or FALSE or NULL ( if not required )
 	
-	public ReportItem(String headerName, List<String> headerValues, boolean isPresent, boolean isRequired, Boolean isCompliant) {
+	public ReportItem(Rule rule, String headerName, List<String> headerValues, boolean isPresent, Boolean isCompliant) {
+		_rule = rule;
 		_headerName = headerName;
 		_headerValues = headerValues;
 		_isPresent = isPresent;
-		_isRequired = isRequired;
 		_isCompliant = isCompliant;
 	}
+	
+	public Rule getRule() {
+		return _rule;
+	}
 
+	public void setRule(Rule rule) {
+		_rule = rule;
+	}
+	
 	public String getHeaderName() {
 		return _headerName;
 	}
@@ -32,8 +41,9 @@ public final class ReportItem {
 
 	public void setHeaderValues(List<String> headerValues) {
 		_headerValues = headerValues;
-	}
-	
+	}	
+
+
 	public boolean isPresent() {
 		return _isPresent;
 	}
@@ -42,13 +52,6 @@ public final class ReportItem {
 		_isPresent = isPresent;
 	}
 
-	public boolean isRequired() {
-		return _isRequired;
-	}
-
-	public void setRequired(boolean isRequired) {
-		_isRequired = isRequired;
-	}
 
 	public Boolean isCompliant() {
 		return _isCompliant;
