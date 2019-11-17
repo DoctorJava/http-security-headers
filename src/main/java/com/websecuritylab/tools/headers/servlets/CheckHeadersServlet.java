@@ -1,7 +1,9 @@
-package com.websecuritylab.tools.headers;
+package com.websecuritylab.tools.headers.servlets;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +14,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.websecuritylab.tools.headers.HeaderRules.HEADER_NAME;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.websecuritylab.tools.headers.HeaderRules;
+import com.websecuritylab.tools.headers.UrlHandler;
+import com.websecuritylab.tools.headers.HeaderRules.HEADER;
 import com.websecuritylab.tools.headers.constants.DoPostParams;
 import com.websecuritylab.tools.headers.constants.ReqAttributes;
 import com.websecuritylab.tools.headers.exceptions.InvalidUrlException;
 import com.websecuritylab.tools.headers.exceptions.SiteNotFoundException;
+import com.websecuritylab.tools.headers.model.Report;
+import com.websecuritylab.tools.headers.model.ReportItem;
+import com.websecuritylab.tools.headers.model.RulesTest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,14 +59,11 @@ public class CheckHeadersServlet extends HttpServlet {
 				Map<String, List<String>> headers = handler.getHeaderMap();
 		        res.setContentType("text/plain;charset=UTF-8");
  		        
-		        String  content = "<h1>Headers</h1>";
-		        if ( HeaderRules.hasHeader(headers, HEADER_NAME.CONTENT_TYPE)) content += "<p>Got Header: " +  HEADER_NAME.CONTENT_TYPE;
-		        if ( HeaderRules.hasHeader(headers, HEADER_NAME.CACHE_CONTROL)) content += "<p>Got Header: " +  HEADER_NAME.CACHE_CONTROL;
+		        HeaderRules rules = new HeaderRules(headers);
 		                
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);	
 
-				req.setAttribute("report", content);
-				req.setAttribute(ReqAttributes.RAW_HEADERS, handler.getRawHeaders());
+				req.setAttribute("report", getReport(rules, handler.getRawHeaders()));
 				
 				dispatcher.forward(req, res);
 		    } catch (SiteNotFoundException e) {
@@ -74,12 +80,36 @@ public class CheckHeadersServlet extends HttpServlet {
 		String testHeaders = req.getParameter(DoPostParams.TEST_HEADERS);
 		logger.info("Got testHeaders: " + testHeaders);
 		
+        HeaderRules rules = new HeaderRules(testHeaders);
+        
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);	
         
-		req.setAttribute(ReqAttributes.RAW_HEADERS, testHeaders);
+		req.setAttribute("report", getReport(rules,testHeaders));
 		
 		dispatcher.forward(req, res);
 
+	}
+	
+	private Report getReport(HeaderRules rules, String rawHeaders) {
+        List<ReportItem> items = new ArrayList<>();
+        for (HEADER header : HEADER.values()) { 
+        	System.out.println("Getting Report: " + header + ": "+ rules.getValues(header) + ": "+  rules.isCompliant(header));
+            items.add(new ReportItem(header, rules.getValues(header), rules.isRequired(header), rules.isCompliant(header)));
+        }
+ 		
+        return new Report("Report Name", items, rawHeaders);
+
+	}
+	
+	private void writeJson(RulesTest rules) {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String json = gson.toJson(rules);
+
+		try (FileWriter writer = new FileWriter("WebContent/json/staff.json")) {
+			gson.toJson(rules, writer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

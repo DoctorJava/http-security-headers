@@ -8,12 +8,32 @@
 </head>
 <body>
 <fieldset>
-	<legend>HTTP Security Header Report</legend>
-	<pre>${report}</pre>
+	<legend>HTTP Security Header Report: ${report.name}</legend>
+	<table>
+		<tr>
+			<th></th><th>Header</th><th>Values</th>
+		</tr>
+		<c:forEach var="item" items="${report.items}">
+			<tr>
+				<td>
+						<%-- ${ item.compliant ... only works with boolean, not Boolean } --%>
+						<c:if test="${item.isRequired()}">
+							${ item.isCompliant() ? "<img src='images/check.png' border=0/>" : "<img src='images/cross.png' border=0/>"}				
+						</c:if>
+				</td>
+				<td>${item.headerName}</td>
+				<td>
+					<c:forEach var="value" items="${item.headerValues}">
+						${value}</br>
+					</c:forEach>					
+				</td>
+			</tr>
+		</c:forEach>
+	</table>
 </fieldset>
 <fieldset>
 	<legend>Raw Response Headers</legend>
-	<pre>${raw_headers}</pre>
+	<pre>${report.rawHeaders}</pre>
 </fieldset>
 </body>
 </html>
