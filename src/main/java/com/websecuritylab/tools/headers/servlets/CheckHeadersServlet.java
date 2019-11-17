@@ -16,16 +16,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.websecuritylab.tools.headers.HeaderRules;
+import com.websecuritylab.tools.headers.PolicyEnforcer;
+import com.websecuritylab.tools.headers.PolicyHandler;
 import com.websecuritylab.tools.headers.UrlHandler;
-import com.websecuritylab.tools.headers.HeaderRules.HEADER;
 import com.websecuritylab.tools.headers.constants.DoPostParams;
 import com.websecuritylab.tools.headers.constants.ReqAttributes;
 import com.websecuritylab.tools.headers.exceptions.InvalidUrlException;
 import com.websecuritylab.tools.headers.exceptions.SiteNotFoundException;
 import com.websecuritylab.tools.headers.model.Report;
 import com.websecuritylab.tools.headers.model.ReportItem;
-import com.websecuritylab.tools.headers.model.RulesTest;
+import com.websecuritylab.tools.headers.model.Rule;
+import com.websecuritylab.tools.headers.model.Headers;
+import com.websecuritylab.tools.headers.model.Policy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,15 +58,16 @@ public class CheckHeadersServlet extends HttpServlet {
 			try {
 				UrlHandler handler = new UrlHandler(testUrl);
 
-				Map<String, List<String>> headers = handler.getHeaderMap();
-		        res.setContentType("text/plain;charset=UTF-8");
+				Map<String, List<String>> headerMap = handler.getHeaderMap();
+				Headers headers = new Headers(headerMap);
  		        
-		        HeaderRules rules = new HeaderRules(headers);
+		        PolicyEnforcer enforcer = new PolicyEnforcer(headers);
 		                
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);	
 
-				req.setAttribute("report", getReport(rules, handler.getRawHeaders()));
+				req.setAttribute("report", getReport(enforcer, headers));
 				
+		        //response.setContentType("text/html;charset=UTF-8");
 				dispatcher.forward(req, res);
 		    } catch (SiteNotFoundException e) {
 				e.printStackTrace();
@@ -80,28 +83,57 @@ public class CheckHeadersServlet extends HttpServlet {
 		String testHeaders = req.getParameter(DoPostParams.TEST_HEADERS);
 		logger.info("Got testHeaders: " + testHeaders);
 		
-        HeaderRules rules = new HeaderRules(testHeaders);
+		Headers headers = new Headers(testHeaders);
+		
+        PolicyEnforcer enforcer = new PolicyEnforcer(headers);
         
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);	
         
-		req.setAttribute("report", getReport(rules,testHeaders));
+		req.setAttribute("report", getReport(enforcer,headers));
 		
+        //response.setContentType("text/html;charset=UTF-8");
 		dispatcher.forward(req, res);
 
 	}
 	
-	private Report getReport(HeaderRules rules, String rawHeaders) {
+//	private Report getReport(PolicyEnforcerHardcodedEnum rules, String rawHeaders) {
+//        List<ReportItem> items = new ArrayList<>();
+//        for (HEADER header : HEADER.values()) { 
+//        	System.out.println("Getting Report: " + header + ": "+ enforcer.getValues(header) + ": "+  enforcer.isCompliant(header));
+//            items.add(new ReportItem(header, enforcer.getValues(header), enforcer.isRequired(header), enforcer.isCompliant(header)));
+//        } 		
+//        return new Report("Report Name", items, rawHeaders);
+//	}
+	
+	private Report getReport(PolicyEnforcer enforcer, Headers headers) {
         List<ReportItem> items = new ArrayList<>();
-        for (HEADER header : HEADER.values()) { 
-        	System.out.println("Getting Report: " + header + ": "+ rules.getValues(header) + ": "+  rules.isCompliant(header));
-            items.add(new ReportItem(header, rules.getValues(header), rules.isRequired(header), rules.isCompliant(header)));
+        
+        
+        
+        Policy policy = PolicyHandler.createDefaultPolicy();
+        
+        
+        
+        for (Rule rule : policy.getRules()) { 
+        	String header = rule.getName();
+        	System.out.println("Getting Report: " + rule.getName() + ": "+ rule.isRequired() + ": "+  enforcer.isPresent(rule));
+        	boolean present =  enforcer.isPresent(rule);
+        	if ( enforcer.isPresent(rule) ) {
+        		boolean isCompliant = true;
+                items.add(new ReportItem(header, headers.getValues(header), present, rule.isRequired(), isCompliant));
+        	}
+        	else
+        	{
+        		boolean isCompliant = false;
+                items.add(new ReportItem(header, null, present, rule.isRequired(), isCompliant));
+        	}
         }
  		
-        return new Report("Report Name", items, rawHeaders);
+        return new Report("Report Name", items, headers.getRawHeaders());
 
 	}
 	
-	private void writeJson(RulesTest rules) {
+	private void writeJson(Policy rules) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String json = gson.toJson(rules);
 
@@ -111,5 +143,6 @@ public class CheckHeadersServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
+
 
 }

@@ -8,25 +8,35 @@
 </head>
 <body>
 <fieldset>
-	<legend>Selected Rules: ${test.name}</legend>
+	<legend>Active Policy: ${policy.name}</legend>
 	<table>
 		<tr>
-			<th></th><th>Header</th><th>Required</th>
+			<th></th><th>Header</th><th>Required</th><th>Contains</th><th>References</th>
 		</tr>
-		<c:forEach var="rule" items="${test.rules}">
+		<c:forEach var="rule" items="${policy.rules}">
 			<tr>
 				<td>
 
 				</td>
 				<td>${rule.name}</td>
 				<td>${rule.required}</td>
+				<td>
+					<c:if test="${rule.contains != null}">${rule.contains}</c:if>
+					<c:if test="${rule.containsAny != null}">Any: ${rule.containsAny}</c:if>
+					<c:if test="${rule.containsAll != null}">All: ${rule.containsAll}</c:if>
+				</td>
+				<td>
+					<c:forEach var="ref" items="${rule.references}">
+						<a href="${ref.url}" target="_blank">${ref.title}</a> | 
+					</c:forEach>
+				</td>
 			</tr>
 		</c:forEach>
 	</table>
 </fieldset>
 
 <fieldset>
-	<legend>Save Test Configuration</legend>
+	<legend>Saved Policies</legend>
 	<form action="MaintainRules" method=POST>
 		<button type="submit">Save Rules</button>
 	</form>

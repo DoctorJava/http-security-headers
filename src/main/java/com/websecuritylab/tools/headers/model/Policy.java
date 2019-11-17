@@ -2,11 +2,11 @@ package com.websecuritylab.tools.headers.model;
 
 import java.util.List;
 
-public class RulesTest {
+public class Policy {
     private String name;
     private List<Rule> rules;
     
-	public RulesTest(String name, List<Rule> rules) {
+	public Policy(String name, List<Rule> rules) {
 		this.name = name;
 		this.rules = rules;
 	}

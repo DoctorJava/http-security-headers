@@ -19,17 +19,18 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.websecuritylab.tools.headers.model.Rule;
-import com.websecuritylab.tools.headers.model.RulesTest;
+import com.websecuritylab.tools.headers.PolicyHandler;
+import com.websecuritylab.tools.headers.model.Policy;
 
 /**
  * Servlet implementation class MaintainRules
  */
 public class MaintainRulesServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger( CheckHeadersServlet.class );  
+    private static final Logger logger = LoggerFactory.getLogger( MaintainRulesServlet.class );  
 	private static final long serialVersionUID = 1L;
 	private static final String JSP_SHOW_RULES = "/WEB-INF/jsp/showRules.jsp";     
-	private static final String JSON_READ_RULE  = "/opt/apps/data/json/activeTest.json";     
-	private static final String JSON_WRITE_RULE = "/opt/apps/data/json/savedTest.json";     
+	private static final String JSON_READ_POLICY  = "/opt/apps/data/json/policyIn.json";     
+	private static final String JSON_WRITE_POLICY = "/opt/apps/data/json/policyOut.json";     
        
     public MaintainRulesServlet() {
         super();
@@ -37,44 +38,27 @@ public class MaintainRulesServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_RULES);
+		
+		Policy policy = PolicyHandler.savedPolicy(JSON_READ_POLICY);
 
-		Gson gson = new Gson();
+		req.setAttribute("policy", policy);
 
-		try (Reader reader = new FileReader(JSON_READ_RULE)) {
-			RulesTest test = gson.fromJson(reader, RulesTest.class);
-			//List<Rule> rules = new ArrayList<>();
-			//rules.add(new Rule("Bingo Rule", true));
-
-			//RulesTest test = new RulesTest("Some Test", rules);
-
-			req.setAttribute("test", test);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+        //res.setContentType("text/html;charset=UTF-8");
 		dispatcher.forward(req, res);
 	}
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_RULES);
-
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        
-        List<Rule> rules = new ArrayList<>();
-        rules.add(new Rule("Some Rule", true));
-        rules.add(new Rule("Nother Rule", false));
-        rules.add(new Rule("Nother Nother Rule", true));
-
-        RulesTest test = new RulesTest("Some Test", rules);
-        
-        try (FileWriter writer = new FileWriter(JSON_WRITE_RULE)) {
-        	System.out.println("Writing JSON:" + writer);
-            gson.toJson(test, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
- 
+		
+		Policy policy = PolicyHandler.createDefaultPolicy();			// TODO: Create FORM to modify policy
+		
+		PolicyHandler.writePolicy(policy, JSON_WRITE_POLICY);
+		
+		req.setAttribute("policy", policy);
+        //res.setContentType("text/html;charset=UTF-8");
+		dispatcher.forward(req, res); 
 	}
+	
+	
 
 }

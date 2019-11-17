@@ -23,6 +23,7 @@
 				</td>
 				<td>${item.headerName}</td>
 				<td>
+					<c:if test="${ !item.isPresent() }">(Missing)</c:if>
 					<c:forEach var="value" items="${item.headerValues}">
 						${value}</br>
 					</c:forEach>					

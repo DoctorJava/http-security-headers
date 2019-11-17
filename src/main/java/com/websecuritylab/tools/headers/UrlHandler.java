@@ -34,9 +34,9 @@ public final class UrlHandler {
 		StringBuffer sb = new StringBuffer();
 		try {
 			URLConnection conn = _url.openConnection();
-			for (Map.Entry<String, List<String>> k : conn.getHeaderFields().entrySet()) {
-			    System.out.println(k.toString());
-			    sb.append(k.toString() + "\n");
+			for (Map.Entry<String, List<String>> entry : conn.getHeaderFields().entrySet()) {
+			    System.out.println(entry.toString());
+			    sb.append(entry.toString().replace("=",": ") + "\n");
 			}
 			return sb.toString();
 		} catch (IOException e) {
@@ -77,5 +77,31 @@ public final class UrlHandler {
 		UrlValidator urlValidator = new UrlValidator();
 
 		return urlValidator.isValid(urlStr);
+	}
+	
+	
+	//
+	// Static Methods
+	//
+	
+	public static Map<String, List<String>> generateHeaderMap(String rawHeaders) {
+		HashMap<String, List<String>> headerMap = new HashMap<>();
+		String[] lines = rawHeaders.split("\\r?\\n");
+		for (String line : lines) {
+			int i = line.indexOf(":");
+			if (i < 0) continue;
+			List<String> values = Arrays.asList(line.substring(i + 1).split(";"));
+			headerMap.put(line.substring(0, i), values);
+		}
+		return headerMap;
+	}
+
+	public static String generateRawHeaders(Map<String, List<String>> headerMap) {
+		StringBuffer sb = new StringBuffer();
+		for (Map.Entry<String, List<String>> entry : headerMap.entrySet()) {
+			System.out.println(entry.toString());
+			sb.append(entry.toString().replace("=", ": ").replace("[", "").replace("]", "") + "\n");			// Default MapEntry to String has = and brackets [...]
+		}
+		return sb.toString();
 	}
 }

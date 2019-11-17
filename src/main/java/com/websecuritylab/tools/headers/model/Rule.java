@@ -8,15 +8,16 @@ public final class Rule {
 	
 	private String name;
 	private boolean required;
-	private List<String> contains;
+	private String contains;
 	private List<String> containsAny;
 	private List<String> containsAll;
+	private List<Reference> references;
 	
 	public Rule(String name, boolean required) {
 		this.name = name;
 		this.required = required;
 	}
-	public Rule(String name,  List<String> contains) {
+	public Rule(String name, String contains) {
 		this.name = name;
 		this.required = true;
 		this.contains = contains;
@@ -41,10 +42,10 @@ public final class Rule {
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
-	public List<String> getContains() {
+	public String getContains() {
 		return contains;
 	}
-	public void setContains(List<String> contains) {
+	public void setContains(String contains) {
 		this.contains = contains;
 	}
 	public List<String> getContainsAny() {
@@ -58,6 +59,12 @@ public final class Rule {
 	}
 	public void setContainsAll(List<String> containsAll) {
 		this.containsAll = containsAll;
+	}
+	public List<Reference> getReferences() {
+		return references;
+	}
+	public void setReferences(List<Reference> references) {
+		this.references = references;
 	}
 
 
