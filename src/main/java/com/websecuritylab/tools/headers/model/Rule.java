@@ -4,37 +4,40 @@ import java.util.List;
 
 public final class Rule {
 	
-	public static enum CONTAINS_TYPE { ANY, ALL }
+	public static enum CONTAINS_TYPE { NONE, ONE, ANY, ALL }
 	
-	private String name;
+	private String headerName;
 	private boolean required;
-	private String contains;
-	private List<String> containsAny;
-	private List<String> containsAll;
+	private CONTAINS_TYPE containsType;
+	private List<String> contains;
+//	private String containsExact;
+//	private List<String> containsAny;
+//	private List<String> containsAll;
 	private List<Reference> references;
 	
 	public Rule(String name, boolean required) {
-		this.name = name;
+		this.headerName = name;
 		this.required = required;
+		this.containsType = CONTAINS_TYPE.NONE;
 	}
-	public Rule(String name, String contains) {
-		this.name = name;
+//	public Rule(String name, String containsExact) {			// containsExact is a String ( not a list )
+//		this.headerName = name;
+//		this.required = true;
+//		this.contains = containsExact;
+//		this.containsType = CONTAINS_TYPE.EXACT;
+//	}	
+	public Rule(String name,  List<String> contains, CONTAINS_TYPE type ) {
+		this.headerName = name;
 		this.required = true;
 		this.contains = contains;
-	}	
-	public Rule(String name,  List<String> contains, CONTAINS_TYPE type ) {
-		this.name = name;
-		this.required = true;
-		if ( CONTAINS_TYPE.ANY.equals(type)) this.containsAny = contains;
-		else if ( CONTAINS_TYPE.ALL.equals(type)) this.containsAll = contains;
+		this.containsType = type;
 	}
 	
-	
-	public String getName() {
-		return name;
+	public String getHeaderName() {
+		return headerName;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setHeaderName(String headerName) {
+		this.headerName = headerName;
 	}
 	public boolean isRequired() {
 		return required;
@@ -42,23 +45,17 @@ public final class Rule {
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
-	public String getContains() {
+	public CONTAINS_TYPE getContainsType() {
+		return containsType;
+	}
+	public void setContainsType(CONTAINS_TYPE containsType) {
+		this.containsType = containsType;
+	}
+	public List<String> getContains() {
 		return contains;
 	}
-	public void setContains(String contains) {
+	public void setContains(List<String> contains) {
 		this.contains = contains;
-	}
-	public List<String> getContainsAny() {
-		return containsAny;
-	}
-	public void setContainsAny(List<String> containsAny) {
-		this.containsAny = containsAny;
-	}
-	public List<String> getContainsAll() {
-		return containsAll;
-	}
-	public void setContainsAll(List<String> containsAll) {
-		this.containsAll = containsAll;
 	}
 	public List<Reference> getReferences() {
 		return references;
@@ -66,6 +63,8 @@ public final class Rule {
 	public void setReferences(List<Reference> references) {
 		this.references = references;
 	}
+	
+
 
 
 	

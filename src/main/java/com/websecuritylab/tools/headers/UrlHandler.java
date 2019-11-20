@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import org.slf4j.Logger;
@@ -84,8 +85,9 @@ public final class UrlHandler {
 	// Static Methods
 	//
 	
-	public static Map<String, List<String>> generateHeaderMap(String rawHeaders) {
-		HashMap<String, List<String>> headerMap = new HashMap<>();
+	public static CaseInsensitiveMap<String, List<String>> generateHeaderMap(String rawHeaders) {
+		//HashMap<String, List<String>> headerMap = new HashMap<>();
+		CaseInsensitiveMap<String, List<String>> headerMap = new CaseInsensitiveMap<>();
 		String[] lines = rawHeaders.split("\\r?\\n");
 		for (String line : lines) {
 			int i = line.indexOf(":");

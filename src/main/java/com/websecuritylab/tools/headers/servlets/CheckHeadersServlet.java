@@ -52,6 +52,10 @@ public class CheckHeadersServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		
 			String testUrl = req.getParameter(DoPostParams.TEST_URL);
+			if (testUrl == null || testUrl.length() == 0 ) {
+				res.sendRedirect( "index.html" ); 				// goto index.html
+				return;
+			}
 			if ( !testUrl.startsWith("http://") && !testUrl.startsWith("https://")  ) testUrl = "http://" + testUrl;
 			logger.info("Got testUrl: " + testUrl);
 			
@@ -115,18 +119,17 @@ public class CheckHeadersServlet extends HttpServlet {
         
         
         for (Rule rule : policy.getRules()) { 
-        	String header = rule.getName();
-        	System.out.println("Getting Report: " + rule.getName() + ": "+ rule.isRequired() + ": "+  enforcer.isPresent(rule));
+        	String headerName = rule.getHeaderName();
+        	//System.out.println("Getting Report: " + rule.getHeaderName() + ": "+ rule.isRequired() + ": "+  enforcer.isPresent(rule));
         	boolean present =  enforcer.isPresent(rule);
-        	if ( enforcer.isPresent(rule) ) {
-        		boolean isCompliant = true;
-                items.add(new ReportItem(rule, header, headers.getValues(header),  present, isCompliant));
+        	boolean compliant = false;
+        	if ( !present && rule.isRequired()) {
+        		compliant = false;
+        	}else {
+        		compliant = enforcer.isCompliant(rule, policy.isCaseSensitiveValues());
         	}
-        	else
-        	{
-        		boolean isCompliant = false;
-                items.add(new ReportItem(rule, header, null, present, isCompliant));
-        	}
+            items.add(new ReportItem(rule, headerName, headers.getValues(headerName), present, compliant));
+        	
         }
  		
         return new Report("Report Name", items, headers.getRawHeaders());

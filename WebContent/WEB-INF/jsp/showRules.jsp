@@ -11,20 +11,16 @@
 	<legend>Active Policy: ${policy.name}</legend>
 	<table>
 		<tr>
-			<th></th><th>Header</th><th>Required</th><th>Contains</th><th>References</th>
+			<th></th><th>Header</th><th>Required</th><th colspan=2>Contains</th><th>References</th>
 		</tr>
 		<c:forEach var="rule" items="${policy.rules}">
 			<tr>
 				<td>
 
 				</td>
-				<td>${rule.name}</td>
+				<td>${rule.headerName}</td>
 				<td>${rule.required}</td>
-				<td>
-					<c:if test="${rule.contains != null}">${rule.contains}</c:if>
-					<c:if test="${rule.containsAny != null}">Any: ${rule.containsAny}</c:if>
-					<c:if test="${rule.containsAll != null}">All: ${rule.containsAll}</c:if>
-				</td>
+				<td>${rule.contains}</td>
 				<td>
 					<c:forEach var="ref" items="${rule.references}">
 						<a href="${ref.url}" target="_blank">${ref.title}</a> | 

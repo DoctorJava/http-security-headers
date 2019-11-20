@@ -31,8 +31,10 @@ public class PolicyHandler {
 		List<String> containsAll_Content = Arrays.asList("charset=", "utf-8");
         rules.add(new Rule("Content-Type", containsAll_Content, CONTAINS_TYPE.ALL));
         
-		String contains_Cache = "no-store";
-        rules.add(new Rule("Cache-Control", contains_Cache));
+		//String containsExact_Cache = "no-store";
+		List<String> contains_Cache = Arrays.asList("no-store");
+        //rules.add(new Rule("Cache-Control", containsExact_Cache));
+        rules.add(new Rule("Cache-Control", contains_Cache, CONTAINS_TYPE.ONE));
         
         Rule ruleHSTS = new Rule("strict-transport-security", true);
 		List<Reference> refHSTS = new ArrayList<>();
@@ -41,10 +43,11 @@ public class PolicyHandler {
 		ruleHSTS.setReferences(refHSTS);
         rules.add(ruleHSTS);
         
-		List<String> containsAny_Frame = Arrays.asList("sameorigin", "deny");
+		List<String> containsAny_Frame = Arrays.asList("SAMEORIGIN", "DENY");
         rules.add(new Rule("x-frame-options" , containsAny_Frame, CONTAINS_TYPE.ANY));
        
-        rules.add(new Rule("X-XSS-Protection", false));
+		List<String> containsAny_Xss = Arrays.asList("1");
+        rules.add(new Rule("X-XSS-Protection", containsAny_Xss, CONTAINS_TYPE.ANY));
         
         rules.add(new Rule("x-content-type-options", false));
                

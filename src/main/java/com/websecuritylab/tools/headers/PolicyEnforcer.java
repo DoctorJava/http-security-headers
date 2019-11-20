@@ -42,9 +42,68 @@ public class PolicyEnforcer {
 
 
 	public boolean isPresent(Rule rule) {
-		return ( _headers.getValues( rule.getName() ) != null );
+		System.out.println("Looking for Header Values for ("+rule.getHeaderName() +") KEY: " + _headers.getValues( rule.getHeaderName() ));
+
+		return ( _headers.getValues( rule.getHeaderName() ) != null );
 	}	
 	
+	public boolean isCompliant(Rule rule, boolean caseSensitive) {
+		boolean compliant = false;
+		List<String> ruleValues = rule.getContains();
+		List<String> headerValues = _headers.getValues( rule.getHeaderName() );
+		
+		System.out.println("Found Header Values for ("+rule.getHeaderName() +") KEY: " + headerValues);
+		
+		String ruleVal;				
+		String headerVal;						// Header strings start with a space when constructed with conn.getHeaderFields();
+		switch(rule.getContainsType()) {
+			case ONE:
+				ruleVal = ruleValues.get(0).trim();	
+				if ( !caseSensitive ) ruleVal = ruleVal.toUpperCase();
+				headerVal = headerValues.get(0).trim();						// Header strings start with a space when constructed with conn.getHeaderFields();
+				if ( !caseSensitive ) headerVal = headerVal.toUpperCase();
+				compliant = ( headerVal.equals(ruleVal));
+				break;
+			case ANY:
+				for ( String ruleValAny : ruleValues ) {
+					ruleVal = ruleValAny.trim();				
+					if ( !caseSensitive ) ruleVal = ruleVal.toUpperCase();
+					for ( String headerValAny : headerValues ) {
+						headerVal = headerValAny.trim();						// Header strings start with a space when constructed with conn.getHeaderFields();
+						if ( !caseSensitive ) headerVal = headerVal.toUpperCase();
+						if ( headerVal.equals(ruleVal)) {
+							compliant = true;
+							break;
+						}
+					}
+				}
+				break;
+			case ALL:
+				for ( String ruleValAll : ruleValues ) {
+					boolean foundIt = false;
+					ruleVal = ruleValAll.trim();				
+					if ( !caseSensitive ) ruleVal = ruleVal.toUpperCase();
+					for ( String headerValAll : headerValues ) {
+						headerVal = headerValAll.trim();						// Header strings start with a space when constructed with conn.getHeaderFields();
+						if ( !caseSensitive ) headerVal = headerVal.toUpperCase();
+						if ( headerVal.equals(ruleVal)) {
+							foundIt = true;
+						}
+					}
+					if ( !foundIt ) {
+						compliant = false;
+						break;					
+					}
+				}
+				break;
+			case NONE:
+	    		compliant = true;
+	    		break;
+			default:
+				logger.error("Error checking compliance. Missing CONTAINS_TYPE" + rule.getContainsType());
+		} 
+		return compliant;
+	}		
 	
 //	public boolean isRequired(HEADER header) {
 //		return header.required();
