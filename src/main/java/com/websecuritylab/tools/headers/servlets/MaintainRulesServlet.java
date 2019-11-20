@@ -29,7 +29,7 @@ public class MaintainRulesServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger( MaintainRulesServlet.class );  
 	private static final long serialVersionUID = 1L;
 	private static final String JSP_SHOW_RULES = "/WEB-INF/jsp/showRules.jsp";     
-	private static final String JSON_READ_POLICY  = "/opt/apps/data/json/policyIn.json";     
+	public static final String JSON_READ_POLICY  = "/opt/apps/data/json/policyIn.json";     // Used by CheckHandlerServlet
 	private static final String JSON_WRITE_POLICY = "/opt/apps/data/json/policyOut.json";     
        
     public MaintainRulesServlet() {

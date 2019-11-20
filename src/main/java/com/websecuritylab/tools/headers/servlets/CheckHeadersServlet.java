@@ -113,8 +113,7 @@ public class CheckHeadersServlet extends HttpServlet {
         List<ReportItem> items = new ArrayList<>();
         
         
-        
-        Policy policy = PolicyHandler.createDefaultPolicy();
+		Policy policy = PolicyHandler.savedPolicy(MaintainRulesServlet.JSON_READ_POLICY);
         
         
         
