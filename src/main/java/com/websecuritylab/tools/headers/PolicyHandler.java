@@ -27,16 +27,38 @@ public class PolicyHandler {
 		
 		
 		List<Rule> rules = new ArrayList<>();
+		
+		//
+		// New rules can use this code template
+		//	
+//		List<String> contains_VALUES = Arrays.asList("Val 1","Val 2");
+//		Rule ruleNAME = new Rule("<HEADER_NAME>", contains_VALUES, CONTAINS_TYPE.<ALL, ANY, ONLY, NONE>);
+//		List<Reference> refNAME = new ArrayList<>();
+//		refNAME.add(new Reference("",""));
+//		refNAME.add(new Reference("",""));
+//		ruleNAME.setReferences(refNAME);
+//      rules.add(ruleNAME);
+        
 
-		List<String> containsAll_Content = Arrays.asList( "text/html", "charset=UTF-8");
-        rules.add(new Rule("Content-Type", containsAll_Content, CONTAINS_TYPE.ALL));
 		//List<String> containsOnly_Content = Arrays.asList( "text/html; charset=UTF-8");
         //rules.add(new Rule("Content-Type", containsOnly_Content, CONTAINS_TYPE.ONLY));
-        
+ 		List<String> containsAll_Content = Arrays.asList( "text/html", "charset=UTF-8");
+		Rule ruleContentType = new Rule("Content-Type", containsAll_Content, CONTAINS_TYPE.ALL);
+        List<Reference> refContentType = new ArrayList<>();       
+        refContentType.add(new Reference("OWASP","https://www.owasp.org/index.php/OWASP_Testing_Guide_Appendix_D:_Encoded_Injection"));
+        refContentType.add(new Reference("w3.org","https://www.w3.org/International/articles/http-charset/index"));
+        ruleContentType.setReferences(refContentType);
+        rules.add(ruleContentType);
+       
 		//String containsExact_Cache = "no-store";
-		List<String> contains_Cache = Arrays.asList("no-store");
         //rules.add(new Rule("Cache-Control", containsExact_Cache)); 
-        rules.add(new Rule("Cache-Control", contains_Cache, CONTAINS_TYPE.ALL));
+		List<String> contains_Cache = Arrays.asList("no-store");
+		Rule ruleCache = new Rule("Cache-Control", contains_Cache, CONTAINS_TYPE.ALL);
+		List<Reference> refCache = new ArrayList<>();
+		refCache.add(new Reference("HyperText Transfer Protocol: A Short Course","https://condor.depaul.edu/dmumaugh/readings/handouts/SE435/HTTP/node24.html"));
+		refCache.add(new Reference("Mozilla MDN","https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control"));
+		ruleCache.setReferences(refCache);
+        rules.add(ruleCache);
         
         Rule ruleHSTS = new Rule("strict-transport-security", true);
 		List<Reference> refHSTS = new ArrayList<>();
@@ -46,14 +68,30 @@ public class PolicyHandler {
         rules.add(ruleHSTS);
         
 		List<String> containsAny_Frame = Arrays.asList("SAMEORIGIN", "DENY");
-        rules.add(new Rule("x-frame-options" , containsAny_Frame, CONTAINS_TYPE.ANY));
-       
-		List<String> containsAny_Xss = Arrays.asList("1");
-        rules.add(new Rule("X-XSS-Protection", containsAny_Xss, CONTAINS_TYPE.ANY));
+		Rule ruleXframe = new Rule("x-frame-options" , containsAny_Frame, CONTAINS_TYPE.ANY);
+        List<Reference> refXframe = new ArrayList<>();       
+        refXframe.add(new Reference("OWASP Clickjacking","https://www.owasp.org/index.php/Clickjacking"));
+        refXframe.add(new Reference("KeyCDN Blog","https://www.keycdn.com/blog/x-frame-options"));
+        ruleXframe.setReferences(refXframe);
+        rules.add(ruleXframe);
+        
+        List<String> containsAny_Xss = Arrays.asList("1");
+        Rule ruleXss = new Rule("X-XSS-Protection", containsAny_Xss, CONTAINS_TYPE.ANY);
+        List<Reference> refXss = new ArrayList<>();
+        refXss.add(new Reference("Mozilla MDN","https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection"));
+        refXss.add(new Reference("KeyCDN","https://www.keycdn.com/blog/x-xss-protection"));
+        ruleXss.setReferences(refXss);
+        rules.add(ruleXss);
         
 		List<String> contains_Options = Arrays.asList("nosniff");
-        rules.add(new Rule("x-content-type-options", contains_Options, CONTAINS_TYPE.ONLY));
-         return new Policy("Default Policy", rules);
+        Rule ruleNosniff = new Rule("x-content-type-options", contains_Options, CONTAINS_TYPE.ONLY);
+   	    List<Reference> refNosniff = new ArrayList<>();
+        refNosniff.add(new Reference("Helmet Nosniff","https://helmetjs.github.io/docs/dont-sniff-mimetype/"));
+        refNosniff.add(new Reference("Denim Group Blog","https://www.denimgroup.com/resources/blog/2019/05/mime-sniffing-in-browsers-and-the-security-implications/"));
+        ruleNosniff.setReferences(refNosniff);
+        rules.add(ruleNosniff); 
+         
+        return new Policy("Default Policy", rules);
 	}
 	
 	public static Policy savedPolicy(String filename) {
