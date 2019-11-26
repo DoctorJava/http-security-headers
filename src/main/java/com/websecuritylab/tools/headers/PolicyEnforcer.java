@@ -21,6 +21,8 @@ public class PolicyEnforcer {
 	public PolicyEnforcer(Headers headers) {
 		_headers = headers;
 	}
+	
+	
     
 //	private Policy _policy;
 //	
@@ -41,6 +43,12 @@ public class PolicyEnforcer {
 
 
 
+	public Headers getHeaders() {
+		return _headers;
+	}
+
+
+
 	public boolean isPresent(Rule rule) {
 		System.out.println("Looking for Header Values for ("+rule.getHeaderName() +") KEY: " + _headers.getValues( rule.getHeaderName() ));
 
@@ -57,7 +65,7 @@ public class PolicyEnforcer {
 		String ruleVal;				
 		String headerVal;						// Header strings start with a space when constructed with conn.getHeaderFields();
 		switch(rule.getContainsType()) {
-			case ONE:
+			case ONLY:
 				ruleVal = ruleValues.get(0).trim();	
 				if ( !caseSensitive ) ruleVal = ruleVal.toUpperCase();
 				headerVal = headerValues.get(0).trim();						// Header strings start with a space when constructed with conn.getHeaderFields();
@@ -70,7 +78,11 @@ public class PolicyEnforcer {
 					if ( !caseSensitive ) ruleVal = ruleVal.toUpperCase();
 					for ( String headerValAny : headerValues ) {
 						headerVal = headerValAny.trim();						// Header strings start with a space when constructed with conn.getHeaderFields();
-						if ( !caseSensitive ) headerVal = headerVal.toUpperCase();
+						
+						
+						System.out.println(">>> Checking ANY Header Values for ("+headerVal +") equals: " + ruleVal);
+						
+						if ( !caseSensitive ) headerVal = headerVal.toUpperCase();						
 						if ( headerVal.equals(ruleVal)) {
 							compliant = true;
 							break;
@@ -79,15 +91,19 @@ public class PolicyEnforcer {
 				}
 				break;
 			case ALL:
+				compliant = true;			// Assume true, and set false if you don't find one of the entries
 				for ( String ruleValAll : ruleValues ) {
 					boolean foundIt = false;
 					ruleVal = ruleValAll.trim();				
+					System.out.println(">>> Checking ruleVal equals: " + ruleVal);
 					if ( !caseSensitive ) ruleVal = ruleVal.toUpperCase();
 					for ( String headerValAll : headerValues ) {
 						headerVal = headerValAll.trim();						// Header strings start with a space when constructed with conn.getHeaderFields();
 						if ( !caseSensitive ) headerVal = headerVal.toUpperCase();
+						System.out.println(">>>>>>> Checking ALL Header Values for ("+headerVal +") equals: " + ruleVal);
 						if ( headerVal.equals(ruleVal)) {
 							foundIt = true;
+							continue;
 						}
 					}
 					if ( !foundIt ) {

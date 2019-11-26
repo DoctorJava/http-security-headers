@@ -9,14 +9,14 @@ public final class ReportItem {
 	private Rule _rule;
 	private boolean _isPresent;			
 	//private boolean _isRequired;			// required is TRUE or FALSE
-	private Boolean _isCompliant;			// compliant is TRUE or FALSE or NULL ( if not required )
+	private Boolean compliant;			// compliant is TRUE or FALSE or NULL ( if not required )
 	
 	public ReportItem(Rule rule, String headerName, List<String> headerValues, boolean isPresent, Boolean isCompliant) {
 		_rule = rule;
 		_headerName = headerName;
 		_headerValues = headerValues;
 		_isPresent = isPresent;
-		_isCompliant = isCompliant;
+		compliant = isCompliant;
 	}
 	
 	public Rule getRule() {
@@ -54,10 +54,10 @@ public final class ReportItem {
 
 
 	public Boolean isCompliant() {
-		return _isCompliant;
+		return compliant;
 	}
 
 	public void setCompliant(Boolean isCompliant) {
-		_isCompliant = isCompliant;
+		compliant = isCompliant;
 	}
 }

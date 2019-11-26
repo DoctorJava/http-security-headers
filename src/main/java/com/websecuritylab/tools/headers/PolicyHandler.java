@@ -28,13 +28,15 @@ public class PolicyHandler {
 		
 		List<Rule> rules = new ArrayList<>();
 
-		List<String> containsAll_Content = Arrays.asList("charset=", "utf-8");
+		List<String> containsAll_Content = Arrays.asList( "text/html", "charset=UTF-8");
         rules.add(new Rule("Content-Type", containsAll_Content, CONTAINS_TYPE.ALL));
+		//List<String> containsOnly_Content = Arrays.asList( "text/html; charset=UTF-8");
+        //rules.add(new Rule("Content-Type", containsOnly_Content, CONTAINS_TYPE.ONLY));
         
 		//String containsExact_Cache = "no-store";
 		List<String> contains_Cache = Arrays.asList("no-store");
-        //rules.add(new Rule("Cache-Control", containsExact_Cache));
-        rules.add(new Rule("Cache-Control", contains_Cache, CONTAINS_TYPE.ONE));
+        //rules.add(new Rule("Cache-Control", containsExact_Cache)); 
+        rules.add(new Rule("Cache-Control", contains_Cache, CONTAINS_TYPE.ALL));
         
         Rule ruleHSTS = new Rule("strict-transport-security", true);
 		List<Reference> refHSTS = new ArrayList<>();
@@ -49,9 +51,9 @@ public class PolicyHandler {
 		List<String> containsAny_Xss = Arrays.asList("1");
         rules.add(new Rule("X-XSS-Protection", containsAny_Xss, CONTAINS_TYPE.ANY));
         
-        rules.add(new Rule("x-content-type-options", false));
-               
-        return new Policy("Default Policy", rules);
+		List<String> contains_Options = Arrays.asList("nosniff");
+        rules.add(new Rule("x-content-type-options", contains_Options, CONTAINS_TYPE.ONLY));
+         return new Policy("Default Policy", rules);
 	}
 	
 	public static Policy savedPolicy(String filename) {

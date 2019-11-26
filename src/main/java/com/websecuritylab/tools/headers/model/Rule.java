@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class Rule {
 	
-	public static enum CONTAINS_TYPE { NONE, ONE, ANY, ALL }
+	public static enum CONTAINS_TYPE { MUST, ONLY, ANY, ALL, NONE }
 	
 	private String headerName;
 	private boolean required;

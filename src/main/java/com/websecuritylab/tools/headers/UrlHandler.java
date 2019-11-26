@@ -31,29 +31,31 @@ public final class UrlHandler {
        _url = new URL(urlStr);
     }
 
-	public String getRawHeaders() throws MalformedURLException, SiteNotFoundException{
-		StringBuffer sb = new StringBuffer();
-		try {
-			URLConnection conn = _url.openConnection();
-			for (Map.Entry<String, List<String>> entry : conn.getHeaderFields().entrySet()) {
-			    System.out.println(entry.toString());
-			    sb.append(entry.toString().replace("=",": ") + "\n");
-			}
-			return sb.toString();
-		} catch (IOException e) {
-			throw new SiteNotFoundException(e);
-		}
-	}
 
 	public Map<String, List<String>> getHeaderMap() throws MalformedURLException, SiteNotFoundException{
 		try {
 			URLConnection conn = _url.openConnection();
 			//get all headers
-			Map<String, List<String>> map = conn.getHeaderFields();
-			for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-				System.out.println("Key : " + entry.getKey() +  " ,Value : " + entry.getValue());
+			Map<String, List<String>> inMap = conn.getHeaderFields();
+			Map<String, List<String>> outMap = new HashMap<>();
+			for (Map.Entry<String, List<String>> entry : inMap.entrySet()) {
+				for ( String valWithSemis : entry.getValue()) {
+					if (valWithSemis.contains(";")) {
+						List<String> strList = new ArrayList<>();
+						for (String s : valWithSemis.split(";"))
+						{
+						    System.out.println("Actually got several strings: " + s);
+						    strList.add(s.trim());
+						}
+						outMap.put(entry.getKey(), strList);
+					}
+					else outMap.put(entry.getKey(), entry.getValue());
+				}
 			}
-			return map;
+			
+			
+			
+			return outMap;
 		} catch (IOException e) {
 			throw new SiteNotFoundException(e);
 		}
@@ -80,7 +82,21 @@ public final class UrlHandler {
 		return urlValidator.isValid(urlStr);
 	}
 	
-	
+	//
+//	public String getRawHeaders() throws MalformedURLException, SiteNotFoundException{
+//		StringBuffer sb = new StringBuffer();
+//		try {
+//			URLConnection conn = _url.openConnection();
+//			for (Map.Entry<String, List<String>> entry : conn.getHeaderFields().entrySet()) {
+//			    System.out.println("Got Entry: " +entry.toString());
+//			    //sb.append(entry.toString().replaceFirst("=",": ") + "\n");				// Only name: value needs replaced.  The value may have multiple items like charset=UTF-8
+//			    sb.append(entry.toString() + "\n");				
+//			}
+//			return sb.toString();
+//		} catch (IOException e) {
+//			throw new SiteNotFoundException(e);
+//		}
+//	}	
 	//
 	// Static Methods
 	//
@@ -92,7 +108,10 @@ public final class UrlHandler {
 		for (String line : lines) {
 			int i = line.indexOf(":");
 			if (i < 0) continue;
-			List<String> values = Arrays.asList(line.substring(i + 1).split(";"));
+			//List<String> values = Arrays.asList(line.substring(i + 1).split(";"));
+			List<String> values = Arrays.asList(line.replace(";",",").substring(i + 1).split(","));			// Some values are ; separated, but other are comma .  Both are treated the same for this tester
+																											// Content-Type	text/html; charset=UTF-8
+																											// Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 			headerMap.put(line.substring(0, i), values);
 		}
 		return headerMap;
@@ -102,7 +121,8 @@ public final class UrlHandler {
 		StringBuffer sb = new StringBuffer();
 		for (Map.Entry<String, List<String>> entry : headerMap.entrySet()) {
 			System.out.println(entry.toString());
-			sb.append(entry.toString().replace("=", ": ").replace("[", "").replace("]", "") + "\n");			// Default MapEntry to String has = and brackets [...]
+			//sb.append(entry.toString().replace("=", ": ").replace("[", "").replace("]", "") + "\n");			// Default MapEntry to String has = and brackets [...]
+			sb.append(entry.toString().replaceFirst("=", ": ").replace("[", "").replace("]", "") + "\n");		// Only name: value needs replaced.  The value may have multiple items like charset=UTF-8
 		}
 		return sb.toString();
 	}

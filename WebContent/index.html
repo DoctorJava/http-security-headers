@@ -6,13 +6,21 @@
 </head>
 <body>
 	
-	<form action="CheckHeaders" method=GET>
-		Target URL: <input type=text name="test_url" />
-		<button type="submit">Process URL Headers</button>
-	</form>
 	<form action="CheckHeaders" method=POST>
-		Response Headers: <textarea  name="test_headers" rows="8" cols="50" ></textarea>
-		<button type="submit">Process Pasted Headers</button>
+		Default Rules: 
+		<select name="policy">
+			<option value="default">Default Rules</option>
+			<option value="caseSentiveValues.json">Case Sensitive Values (more strict)</option>
+		</select>
+		</br>
+		Target URL: <input type=text name="test_url" />
+		<button type="submit" name="processURL" value=true>Process Headers FROM URL</button>
+		</br>
+		OR:</br>
+		Paste Response Headers Here: 
+		</br>
+		<textarea  name="test_headers" rows="8" cols="50" ></textarea>
+		<button type="submit" name="processURL" value=false>Process Pasted Headers</button>
 	</form>
 	
 	<a href="MaintainRules" method=GET>Maintain Rules</a>

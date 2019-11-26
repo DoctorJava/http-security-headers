@@ -24,15 +24,12 @@ public class Headers {
 	public Headers(String rawHeaders) {
 		_rawHeaders = rawHeaders;
 		_headerMap  = UrlHandler.generateHeaderMap(rawHeaders);
-		
-		System.out.println("Got Header KEYS: " + _headerMap.keySet());
 	}	
 	
 
 	
 	
 	public List<String> getValues(String headerName) {
-		// TODO: Need to do case insensitive match on the header NAME
 		return _headerMap.get(headerName);
 	}
 	

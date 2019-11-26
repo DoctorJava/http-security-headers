@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Policy {
     private String name;
-    private boolean caseSensitiveValues = true;
+    private boolean caseSensitiveValues = false;
     private List<Rule> rules;
     
 	public Policy(String name, List<Rule> rules) {
